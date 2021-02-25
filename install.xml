@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Latitude and Genoapay Payment Extensions</name>
+    <version>1.2</version>
+    <code>LatitudeGenoapayPaymentExtension v1.2</code>
+    <author>Magebinary</author>
+    <link>https://www.magebinary.co.nz</link>
+    
+    <file path="catalog/view/theme/*/template/checkout/cart.twig">
+        <operation>
+            <search><![CDATA[ <div class="buttons"> ]]></search>
+            <add position="before"><![CDATA[
+                {% if latitude_payment_info_snippet %}
+                    <div style="text-align: right;">
+                        {{ latitude_payment_info_snippet }}
+                    </div>
+                {% endif %}
+                {% if genoapay_payment_info_snippet %}
+                    <div style="text-align: right;">
+                        {{ genoapay_payment_info_snippet }}
+                    </div>
+                {% endif %}
+
+            ]]></add>
+        </operation>
+    </file>
+    
+</modification>
