@@ -176,7 +176,7 @@ class ControllerExtensionPaymentGenoapay extends Controller {
 
     public function modalScript() {
         if ($this->config->get('payment_' . $this->_getPaymentMethodCode() . '_status')) {
-            $this->document->addScript('catalog/view/javascript/' . $this->_getPaymentMethodCode() . '/js/g_modal.js', 'footer');
+            $this->document->addScript('catalog/view/javascript/' . $this->_getPaymentMethodCode() . '/js/modal.js', 'footer');
             $this->document->addStyle('catalog/view/javascript/' . $this->_getPaymentMethodCode() . '/css/style.css');
         }
     }

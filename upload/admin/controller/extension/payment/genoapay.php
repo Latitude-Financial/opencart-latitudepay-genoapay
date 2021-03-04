@@ -37,9 +37,9 @@ class ControllerExtensionPaymentGenoapay extends Controller
         $this->model_setting_event->addEvent($this->_getPaymentMethodCode() . '_product_info', 'catalog/view/product/product/before', 'extension/payment/' . $this->_getPaymentMethodCode() . '/productInfo');
         $this->model_setting_event->addEvent($this->_getPaymentMethodCode() . '_product_modal_script', 'catalog/controller/product/product/before', 'extension/payment/' . $this->_getPaymentMethodCode() . '/modalScript');
         $this->model_setting_event->addEvent($this->_getPaymentMethodCode() . '_cart_info', 'catalog/view/checkout/cart/before', 'extension/payment/' . $this->_getPaymentMethodCode() . '/cartInfo');
-        //$this->model_setting_event->addEvent($this->_getPaymentMethodCode() . '_cart_modal_script', 'catalog/controller/checkout/cart/before', 'extension/payment/' . $this->_getPaymentMethodCode() . '/modalScript');
+        $this->model_setting_event->addEvent($this->_getPaymentMethodCode() . '_cart_modal_script', 'catalog/controller/checkout/cart/before', 'extension/payment/' . $this->_getPaymentMethodCode() . '/modalScript');
         $this->model_setting_event->addEvent($this->_getPaymentMethodCode() . '_checkout_warning_check', 'catalog/view/checkout/checkout/before', 'extension/payment/' . $this->_getPaymentMethodCode() . '/checkoutInfo');
-        //$this->model_setting_event->addEvent($this->_getPaymentMethodCode() . '_checkout_modal_script', 'catalog/controller/checkout/checkout/before', 'extension/payment/' . $this->_getPaymentMethodCode() . '/modalScript');
+        $this->model_setting_event->addEvent($this->_getPaymentMethodCode() . '_checkout_modal_script', 'catalog/controller/checkout/checkout/before', 'extension/payment/' . $this->_getPaymentMethodCode() . '/modalScript');
         $this->model_setting_event->addEvent($this->_getPaymentMethodCode() . '_admin_refund_button', 'admin/view/sale/order_info/before', 'extension/payment/' . $this->_getPaymentMethodCode() . '/orderInfo');
 
         // Add default order statuses configuration
@@ -171,7 +171,7 @@ class ControllerExtensionPaymentGenoapay extends Controller
                                     $pTran['order_id'],
                                     $this->model_setting_setting->getSettingValue('payment_'.$this->_getPaymentMethodCode().'_order_refunded_status_id',$this->config->get('config_store_id')),
                                     sprintf(
-                                        $this->language->get($this->_getPaymentMethodCode() . '_pay_refund_order_history_message'),
+                                        $this->language->get($this->_getPaymentMethodCode() . '_refund_order_history_message'),
                                         $refundResponse['refundId'],
                                         $this->currency->format($amount, $pTran['currency_code'])
                                     )
@@ -181,7 +181,7 @@ class ControllerExtensionPaymentGenoapay extends Controller
                                     $pTran['order_id'],
                                     $this->model_setting_setting->getSettingValue('payment_'.$this->_getPaymentMethodCode().'_order_partial_refunded_status_id',$this->config->get('config_store_id')),
                                     sprintf(
-                                        $this->language->get($this->_getPaymentMethodCode() . '_pay_refund_order_history_message'),
+                                        $this->language->get($this->_getPaymentMethodCode() . 'refund_order_history_message'),
                                         $refundResponse['refundId'],
                                         $this->currency->format($amount, $pTran['currency_code'])
                                     )
@@ -239,7 +239,7 @@ class ControllerExtensionPaymentGenoapay extends Controller
                         $refund_url = $this->url->link('extension/payment/' . $this->_getPaymentMethodCode() . '/refund', 'user_token=' . $this->session->data['user_token'] . '&token=' . $transaction['payment_token'], true);
                         $refund_button = str_replace("{{{refund_url}}}", $refund_url, $this->language->get($this->_getPaymentMethodCode() . '_refund_button'));
                         $refund_button = str_replace("{{{refund_amount}}}", $availableRefundAmount, $refund_button);
-                        $refund_script = '<script src="view/javascript/' . $this->_getPaymentMethodCode() . '/l_order.js"></script>';
+                        $refund_script = '<script src="view/javascript/' . $this->_getPaymentMethodCode() . '/refund.js"></script>';
                         $data['footer'] = str_replace("{{{refund_button}}}", $refund_button, str_replace("{{{text_payment_method}}}", $this->language->get('text_payment_method'), $this->language->get($this->_getPaymentMethodCode() . '_refund_script'))) . "\n" . $refund_script . "\n" . $data['footer'];
                     }
                 }

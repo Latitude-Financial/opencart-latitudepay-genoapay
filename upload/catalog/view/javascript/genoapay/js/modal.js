@@ -8,14 +8,16 @@
         element.style.display = 'none';
     }
 
-    $('body').on('click', '#genoapay-popup', function(event) {
+    $('body').on('click', '#genoapay-popup, .wc-latitudefinance-payment-method-container', function(event) {
         // prevent default
         event.preventDefault();
         event.stopImmediatePropagation();
         var popup = document.getElementById('g-infomodal-container');
-        document.body.appendChild(popup);
-        // popup the Genoapay HTML
-        openPopup(popup);
+        if (popup) {
+            document.body.appendChild(popup);
+            // popup the Genoapay HTML
+            openPopup(popup);
+        }
     });
 
     $('body').on('click', '#g-infomodal-close', function () {

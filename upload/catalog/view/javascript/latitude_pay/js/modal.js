@@ -13,9 +13,11 @@
         event.preventDefault();
         event.stopImmediatePropagation();
         var popup = document.getElementById('lp-modal-container');
-        document.body.appendChild(popup);
-        // popup the Latitude Pay HTML
-        openPopup(popup);
+        if (popup) {
+            document.body.appendChild(popup);
+            // popup the Latitude Pay HTML
+            openPopup(popup);
+        }
     });
 
     $('body').on('click', '#lp-modal-close', function () {
