@@ -8,18 +8,18 @@
         element.style.display = 'none';
     }
 
-    $('body').on('click', '#latitudepay-popup', function(event) {
+    $('body').on('click', '#genoapay-popup', function(event) {
         // prevent default
         event.preventDefault();
         event.stopImmediatePropagation();
-        var popup = document.getElementById('lp-modal-container');
+        var popup = document.getElementById('g-infomodal-container');
         document.body.appendChild(popup);
-        // popup the latitudepay HTML
+        // popup the Genoapay HTML
         openPopup(popup);
     });
 
-    $('body').on('click', '#lp-modal-close', function () {
-        var popup = document.getElementById('lp-modal-container');
+    $('body').on('click', '#g-infomodal-close', function () {
+        var popup = document.getElementById('g-infomodal-container');
         closePopup(popup);
     });
 })(jQuery);
