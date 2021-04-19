@@ -7,7 +7,7 @@ upload/admin/model/extension/payment/genoapay.php upload/admin/model/extension/p
 upload/admin/view/image/payment/genoapay.svg upload/admin/view/image/payment/genoapay.svg
 upload/admin/view/image/payment/genoapay_small.svg upload/admin/view/image/payment/genoapay_small.svg
 upload/admin/view/javascript/genoapay/refund.js upload/admin/view/javascript/genoapay/refund.js
-upload/admin/template/extension/payment/genoapay.twig upload/admin/template/extension/payment/genoapay.twig
+upload/admin/view/template/extension/payment/genoapay.twig upload/admin/view/template/extension/payment/genoapay.twig
 
 ## Catalog
 upload/catalog/controller/extension/payment/genoapay.php upload/catalog/controller/extension/payment/genoapay.php
@@ -25,7 +25,7 @@ upload/admin/model/extension/payment/latitude_pay.php upload/admin/model/extensi
 upload/admin/view/image/payment/latitude_pay.svg upload/admin/view/image/payment/latitude_pay.svg
 upload/admin/view/image/payment/latitude_pay_small.svg upload/admin/view/image/payment/latitude_pay_small.svg
 upload/admin/view/javascript/latitude_pay/refund.js upload/admin/view/javascript/latitude_pay/refund.js
-upload/admin/template/extension/payment/latitude_pay.twig upload/admin/template/extension/payment/latitude_pay.twig
+upload/admin/view/template/extension/payment/latitude_pay.twig upload/admin/view/template/extension/payment/latitude_pay.twig
 
 ## Catalog
 upload/catalog/controller/extension/payment/latitude_pay.php upload/catalog/controller/extension/payment/latitude_pay.php
@@ -36,7 +36,7 @@ upload/catalog/view/javascript/latitude_pay/js/modal.js upload/catalog/view/java
 upload/catalog/view/theme/default/template/extension/payment/latitude_pay.twig upload/catalog/view/theme/default/template/extension/payment/latitude_pay.twig
 
 # Images
-/upload/catalog/image/catalog/* /upload/catalog/image/catalog/
+/upload/image/catalog/* /upload/image/catalog/
 
 # Library
 /upload/system/library/* /upload/system/library/
