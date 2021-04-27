@@ -3,7 +3,8 @@ class ControllerExtensionPaymentGenoapay extends Controller
 {
     const CURRENCY_CODE = "NZD";
     const PAYMENT_METHOD_CODE = "genoapay";
-    const LIBRARY_CODE = 'latitude_pay';
+    const LIBRARY_CODE = 'latitudepaylib';
+    const DEFAULT_IMAGES_API_URL = 'https://images.latitudepayapps.com/';
 
     private $error = array();
 
@@ -74,23 +75,24 @@ class ControllerExtensionPaymentGenoapay extends Controller
         $this->document->setTitle($this->language->get('heading_title'));
 
         if ($this->request->server['REQUEST_METHOD'] == 'POST' && $this->validate()) {
+            $configData = $this->request->post;
             // Validate the configuration first
-            $environment = $this->request->post['payment_' . $this->_getPaymentMethodCode() . '_environment'];
+            $environment = $configData['payment_' . $this->_getPaymentMethodCode() . '_environment'];
             $error = false;
             if ($environment) {
                 switch ($environment) {
                     case 'production':
                         if (
-                            !$this->request->post['payment_' . $this->_getPaymentMethodCode() . '_production_api_key'] ||
-                            !$this->request->post['payment_' . $this->_getPaymentMethodCode() . '_production_api_secret']
+                            !$configData['payment_' . $this->_getPaymentMethodCode() . '_production_api_key'] ||
+                            !$configData['payment_' . $this->_getPaymentMethodCode() . '_production_api_secret']
                         ) {
                             $error = $this->language->get($this->_getPaymentMethodCode() . '_api_credentials_required');
                         }
                         break;
                     case 'sandbox':
                         if (
-                            !$this->request->post['payment_' . $this->_getPaymentMethodCode() . '_sandbox_api_key'] ||
-                            !$this->request->post['payment_' . $this->_getPaymentMethodCode() . '_sandbox_api_secret']
+                            !$configData['payment_' . $this->_getPaymentMethodCode() . '_sandbox_api_key'] ||
+                            !$configData['payment_' . $this->_getPaymentMethodCode() . '_sandbox_api_secret']
                         ) {
                             $error = $this->language->get($this->_getPaymentMethodCode() . '_api_credentials_required');
                         }
@@ -107,8 +109,17 @@ class ControllerExtensionPaymentGenoapay extends Controller
                 $this->session->data[$this->_getPaymentMethodCode() . '_error_message'] = $error;
                 $this->response->redirect($this->url->link('extension/payment/'.$this->_getPaymentMethodCode(), 'user_token=' . $this->session->data['user_token'], true));
             }
+            if (!class_exists('ControllerExtensionPaymentLatitudePay')) {
+                require_once __DIR__ . '/latitudepay.php';
+            }
+            if ($this->_getPaymentMethodCode() === ControllerExtensionPaymentLatitudePay::PAYMENT_METHOD_CODE) {
+                $imagesApiUrlConfigCode = 'payment_' . $this->_getPaymentMethodCode() . '_images_api_url';
+                if (!isset($configData[$imagesApiUrlConfigCode]) || empty($configData[$imagesApiUrlConfigCode])) {
+                    $configData[$imagesApiUrlConfigCode] = self::DEFAULT_IMAGES_API_URL;
+                }
+            }
 
-            $this->model_setting_setting->editSetting('payment_'.$this->_getPaymentMethodCode(), $this->request->post, $this->config->get('config_store_id'));
+            $this->model_setting_setting->editSetting('payment_'.$this->_getPaymentMethodCode(), $configData, $this->config->get('config_store_id'));
             if (!$this->_gateway) {
                 $this->_gateway = $this->_getPaymentGateway($this->getCurrentPaymentGateway());
             }
@@ -153,9 +164,7 @@ class ControllerExtensionPaymentGenoapay extends Controller
                 $availableRefundAmount = $this->registry->get('model_extension_payment_' . $this->_getPaymentMethodCode())->getAvailableRefundAmount($pTran['order_id']);
                 if ($amount <= $availableRefundAmount) {
                     $refundResponse = $this->_refund($pTran['order_id'], $pTran['payment_token'], $pTran['currency_code'], $amount);
-                    if ($this->_shouldLog()) {
-                        $this->registry->get($this->_getPaymentMethodCode())->log("Refunded successfully with response: ".json_encode($refundResponse));
-                    }
+
                     if ($refundResponse && isset($refundResponse['refundId'])) {
                         if ($this->registry->get('model_extension_payment_' . $this->_getPaymentMethodCode())->addRefundTransaction(
                             $refundResponse['refundId'],
@@ -278,6 +287,7 @@ class ControllerExtensionPaymentGenoapay extends Controller
 
     /**
      * Show error page that warn user to configure the correct currency
+     * @return mixed
      */
     protected function showErrorPage() {
         $this->document->setTitle($this->language->get('heading_title'));
@@ -286,7 +296,7 @@ class ControllerExtensionPaymentGenoapay extends Controller
 
         $this->buildPageLayout($data, $this->_getPaymentMethodCode(), true);
 
-        $this->response->setOutput($this->load->view('extension/payment/'.$this->_getPaymentMethodCode(), $data));
+        return $this->response->setOutput($this->load->view('extension/payment/'.$this->_getPaymentMethodCode(), $data));
     }
 
     /**
@@ -322,11 +332,11 @@ class ControllerExtensionPaymentGenoapay extends Controller
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('heading_title'),
-            'href' => $this->url->link('extension/payment/'.$this->_getPaymentMethodCode(), 'user_token=' . $this->session->data['user_token'], true),
+            'href' => $this->url->link('extension/payment/'.$paymentGatewayCode, 'user_token=' . $this->session->data['user_token'], true),
         );
 
         if (!$errorPage) {
-            $data['action'] = $this->url->link('extension/payment/'.$this->_getPaymentMethodCode(), 'user_token=' . $this->session->data['user_token'], true);
+            $data['action'] = $this->url->link('extension/payment/'.$paymentGatewayCode, 'user_token=' . $this->session->data['user_token'], true);
         }
 
         $data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true);
@@ -410,30 +420,21 @@ class ControllerExtensionPaymentGenoapay extends Controller
                 BinaryPay_Variable::REASON          => '',
                 BinaryPay_Variable::PASSWORD        => $paymentConfig['payment_' . $this->_getPaymentMethodCode() . '_' . $paymentConfig['payment_' . $this->_getPaymentMethodCode() . '_environment'] . '_api_secret']
             );
-            if ($this->_shouldLog()) {
-                $this->registry->get($this->_getPaymentMethodCode())->log("New refund request with data: ".json_encode($refund));
-            }
             return $this->_gateway->refund($refund);
         }
         return false;
     }
 
     /**
-     * Check debug configuration is enabled
-     * @return bool
+     * @return string
      */
-    protected function _shouldLog() {
-        if ($this->config->get('payment_' . $this->_getPaymentMethodCode() . '_debug')) {
-            $this->registry->get(self::LIBRARY_CODE)->initLogger('' . $this->_getPaymentMethodCode());
-            return true;
-        }
-        return false;
-    }
-
     protected function _getCurrencyCode() {
         return self::CURRENCY_CODE;
     }
 
+    /**
+     * @return string
+     */
     protected function _getPaymentMethodCode() {
         return self::PAYMENT_METHOD_CODE;
     }

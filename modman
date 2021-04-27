@@ -16,24 +16,28 @@ upload/catalog/model/extension/payment/genoapay.php upload/catalog/model/extensi
 upload/catalog/view/javascript/genoapay/css/style.css upload/catalog/view/javascript/genoapay/css/style.css
 upload/catalog/view/javascript/genoapay/js/modal.js upload/catalog/view/javascript/genoapay/js/modal.js
 upload/catalog/view/theme/default/template/extension/payment/genoapay.twig upload/catalog/view/theme/default/template/extension/payment/genoapay.twig
+upload/catalog/view/theme/default/template/extension/payment/genoapay_footer.twig upload/catalog/view/theme/default/template/extension/payment/genoapay_footer.twig
 
 # Latitudepay
 ## Admin
-upload/admin/controller/extension/payment/latitude_pay.php upload/admin/controller/extension/payment/latitude_pay.php
-upload/admin/language/en-gb/extension/payment/latitude_pay.php upload/admin/language/en-gb/extension/payment/latitude_pay.php
-upload/admin/model/extension/payment/latitude_pay.php upload/admin/model/extension/payment/latitude_pay.php
-upload/admin/view/image/payment/latitude_pay.svg upload/admin/view/image/payment/latitude_pay.svg
-upload/admin/view/image/payment/latitude_pay_small.svg upload/admin/view/image/payment/latitude_pay_small.svg
-upload/admin/view/javascript/latitude_pay/refund.js upload/admin/view/javascript/latitude_pay/refund.js
-upload/admin/view/template/extension/payment/latitude_pay.twig upload/admin/view/template/extension/payment/latitude_pay.twig
+upload/admin/controller/extension/payment/latitudepay.php upload/admin/controller/extension/payment/latitudepay.php
+upload/admin/language/en-gb/extension/payment/latitudepay.php upload/admin/language/en-gb/extension/payment/latitudepay.php
+upload/admin/model/extension/payment/latitudepay.php upload/admin/model/extension/payment/latitudepay.php
+upload/admin/view/image/payment/latitudepay.svg upload/admin/view/image/payment/latitudepay.svg
+upload/admin/view/image/payment/latitudepay_small.svg upload/admin/view/image/payment/latitudepay_small.svg
+upload/admin/view/javascript/latitudepay/refund.js upload/admin/view/javascript/latitudepay/refund.js
+upload/admin/view/template/extension/payment/latitudepay.twig upload/admin/view/template/extension/payment/latitudepay.twig
 
 ## Catalog
-upload/catalog/controller/extension/payment/latitude_pay.php upload/catalog/controller/extension/payment/latitude_pay.php
-upload/catalog/language/en-gb/extension/payment/latitude_pay.php upload/catalog/language/en-gb/extension/payment/latitude_pay.php
-upload/catalog/model/extension/payment/latitude_pay.php upload/catalog/model/extension/payment/latitude_pay.php
-upload/catalog/view/javascript/latitude_pay/css/style.css upload/catalog/view/javascript/latitude_pay/css/style.css
-upload/catalog/view/javascript/latitude_pay/js/modal.js upload/catalog/view/javascript/latitude_pay/js/modal.js
-upload/catalog/view/theme/default/template/extension/payment/latitude_pay.twig upload/catalog/view/theme/default/template/extension/payment/latitude_pay.twig
+upload/catalog/controller/extension/payment/latitudepay.php upload/catalog/controller/extension/payment/latitudepay.php
+upload/catalog/language/en-gb/extension/payment/latitudepay.php upload/catalog/language/en-gb/extension/payment/latitudepay.php
+upload/catalog/model/extension/payment/latitudepay.php upload/catalog/model/extension/payment/latitudepay.php
+upload/catalog/view/javascript/latitudepay/css/style.css upload/catalog/view/javascript/latitudepay/css/style.css
+upload/catalog/view/javascript/latitudepay/js/modal.js upload/catalog/view/javascript/latitudepay/js/modal.js
+upload/catalog/view/theme/default/template/extension/payment/latitudepay.twig upload/catalog/view/theme/default/template/extension/payment/latitudepay.twig
+upload/catalog/view/theme/default/template/extension/payment/latitudepay_snippet.twig upload/catalog/view/theme/default/template/extension/payment/latitudepay_snippet.twig
+upload/catalog/view/theme/default/template/extension/payment/latitudepay_modal.twig upload/catalog/view/theme/default/template/extension/payment/latitudepay_modal.twig
+upload/catalog/view/theme/default/template/extension/payment/latitudepay_footer.twig upload/catalog/view/theme/default/template/extension/payment/latitudepay_footer.twig
 
 # Images
 /upload/image/catalog/* /upload/image/catalog/

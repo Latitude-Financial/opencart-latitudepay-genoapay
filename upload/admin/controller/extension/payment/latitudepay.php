@@ -7,7 +7,7 @@ if (!class_exists('ControllerExtensionPaymentGenoapay')) {
 class ControllerExtensionPaymentLatitudePay extends ControllerExtensionPaymentGenoapay
 {
     const CURRENCY_CODE = "AUD";
-    const PAYMENT_METHOD_CODE = "latitude_pay";
+    const PAYMENT_METHOD_CODE = "latitudepay";
 
     protected function _getCurrencyCode() {
         return self::CURRENCY_CODE;

@@ -25,12 +25,12 @@ class ControllerExtensionPaymentGenoapay extends Controller {
     
     const PAYMENT_METHOD_CODE = 'genoapay';
     
-    const LIBRARY_CODE = 'latitude_pay';
+    const LIBRARY_CODE = 'latitudepaylib';
 
     const CURRENCY_CODE = 'NZD';
 
     /**
-     * ControllerExtensionPaymentLatitudePay constructor.
+     * ControllerExtensionPaymentGenoapay constructor.
      * @param $registry
      */
     public function __construct($registry)
@@ -40,6 +40,7 @@ class ControllerExtensionPaymentGenoapay extends Controller {
         $this->load->model('setting/setting');
         $this->load->model('checkout/order');
         $this->load->model('extension/payment/' . $this->_getPaymentMethodCode());
+        $this->twig = new Template('Twig');
     }
 
     /**
@@ -55,22 +56,28 @@ class ControllerExtensionPaymentGenoapay extends Controller {
             $purchase_data = $this->_buildPurchaseData($order_info);
             $gateway = $this->_getPaymentGateway();
             if ($gateway) {
-                if ($this->_shouldLog()) {
-                    $this->latitude_pay->log("New purchase request with data: ".json_encode($purchase_data));
-                }
                 $purchase_response = $gateway->purchase($purchase_data);
                 if (isset($purchase_response['paymentUrl'])) {
                     $data['payment_url'] = $purchase_response['paymentUrl'];
-                    $data['text_info_payment_checkout'] = sprintf(
-                        $this->language->get('text_info_payment_checkout'),
-                        $this->currency->format($order_info['total'] / 10, $order_info['currency_code'])
-                    );
+                    if ($this->_getPaymentMethodCode() === ControllerExtensionPaymentLatitudePay::PAYMENT_METHOD_CODE) {
+                        $data['text_info_payment_checkout'] = $this->getSnippetContent($order_info['total'], true);
+                        $data['text_info_payment_checkout'] .= $this->getModalContent();
+                    } else {
+                        $data['text_info_payment_checkout'] = sprintf(
+                            $this->language->get('text_info_payment_checkout'),
+                            $this->currency->format($order_info['total'] / 10, $order_info['currency_code'])
+                        );
+                    }
+
                     return $this->load->view('extension/payment/' . $this->_getPaymentMethodCode(), $data);
                 }
             }
         }
     }
 
+    /**
+     * Handle return request
+     */
     public function callback() {
         try {
             $this->load->language('extension/payment/' . $this->_getPaymentMethodCode());
@@ -102,17 +109,11 @@ class ControllerExtensionPaymentGenoapay extends Controller {
                         'date_added' => 'NOW()',
                         'date_modified' => 'NOW()'
                     ));
-                    if ($this->_shouldLog()) {
-                        $this->latitude_pay->log("Payment success with response: ".json_encode($response));
-                    }
 
                     $this->response->redirect($this->url->link('checkout/success', '', true));
                     break;
                 case BinaryPay_Variable::STATUS_UNKNOWN:
                 case BinaryPay_Variable::STATUS_FAILED:
-                    if ($this->_shouldLog()) {
-                        $this->latitude_pay->log("Payment failed or cancelled with response: ".json_encode($response));
-                    }
                     $this->registry->get('model_extension_payment_' . $this->_getPaymentMethodCode())->updateOrderStatus(
                         $order['order_id'],
                         $this->model_setting_setting->getSettingValue(
@@ -125,35 +126,35 @@ class ControllerExtensionPaymentGenoapay extends Controller {
                     break;
             }
         } catch (\Exception $exception) {
-            if ($this->_shouldLog()) {
-                $this->latitude_pay->initLogger($paymentGateway)->log($exception->getMessage());
-            }
             $this->response->redirect($this->url->link('checkout/failure', '', true));
         }
     }
 
+    /**
+     * Display payment snippet and modal in PDP
+     * @param $route
+     * @param $data
+     * @param $output
+     */
     public function productInfo(&$route, &$data, &$output){
         if ($data['price'] && !empty($this->request->get['product_id']) && $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_status')) {
-            $this->load->language('extension/payment/' . $this->_getPaymentMethodCode());
             $this->load->model('catalog/product');
             $product_info = $this->model_catalog_product->getProduct($this->request->get['product_id']);
             if($product_info['quantity']) {
-                $price = $this->tax->calculate(($data['special'] ? $product_info['special']  : $product_info['price']), $product_info['tax_class_id'], $this->config->get('config_tax'));
+                $amount = $this->tax->calculate(($data['special'] ? $product_info['special']  : $product_info['price']), $product_info['tax_class_id'], $this->config->get('config_tax'));
                 if ($this->_isMethodAvailable(true)) {
-                    if ($price >= $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_order_total')) {
-                        $snippet = $this->language->get('text_info_payment_with_amount');
-                        $weeklyAmount = $this->currency->format($price / 10, $this->session->data['currency']);
-                        $text_payment = str_replace("{{{amount}}}", $weeklyAmount, $snippet);
-                        $text_payment = str_replace("\"", "'", $text_payment);
-                    } else {
-                        $text_payment = $this->language->get('text_info_payment');
-                    }
-                    $data['footer'] = "\n <script type='text/javascript'>document.getElementById('product').insertAdjacentHTML('beforebegin',\"{$text_payment}\");</script> \n" . $this->language->get('text_' . $this->_getPaymentMethodCode() . '_modal') . "\n{$data['footer']}";
+                    $this->displayPaymentSnippet($amount,$data);
                 }
             }
         }
     }
 
+    /**
+     * Display payment snippet in cart page
+     * @param $route
+     * @param $data
+     * @param $output
+     */
     public function cartInfo(&$route, &$data, &$output){
         $this->load->language('extension/payment/' . $this->_getPaymentMethodCode());
         $this->load->model('checkout/order');
@@ -166,6 +167,12 @@ class ControllerExtensionPaymentGenoapay extends Controller {
         }
     }
 
+    /**
+     * Display payment snippet in the checkout page
+     * @param $route
+     * @param $data
+     * @param $output
+     */
     public function checkoutInfo(&$route, &$data, &$output){
         $this->load->language('extension/payment/' . $this->_getPaymentMethodCode());
         if (isset($this->session->data[$this->_getPaymentMethodCode() . '_warning_message']) && $message = $this->session->data[$this->_getPaymentMethodCode() . '_warning_message']) {
@@ -174,8 +181,14 @@ class ControllerExtensionPaymentGenoapay extends Controller {
         }
     }
 
+    /**
+     * Append stylesheet and script
+     */
     public function modalScript() {
-        if ($this->config->get('payment_' . $this->_getPaymentMethodCode() . '_status')) {
+        if (
+            $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_status') &&
+            $this->_getPaymentMethodCode() === ControllerExtensionPaymentGenoapay::PAYMENT_METHOD_CODE
+        ) {
             $this->document->addScript('catalog/view/javascript/' . $this->_getPaymentMethodCode() . '/js/modal.js', 'footer');
             $this->document->addStyle('catalog/view/javascript/' . $this->_getPaymentMethodCode() . '/css/style.css');
         }
@@ -328,7 +341,7 @@ class ControllerExtensionPaymentGenoapay extends Controller {
      */
     protected function _getPaymentGateway() {
         $paymentGatewayCode = $this->registry->get('model_extension_payment_' . $this->_getPaymentMethodCode())->getCurrentPaymentGateway();
-        return $this->latitude_pay->getPaymentGateway(
+        return $this->registry->get(self::LIBRARY_CODE)->getPaymentGateway(
             $paymentGatewayCode
             , $this->model_setting_setting->getSetting(
             'payment_'.$paymentGatewayCode,
@@ -349,18 +362,20 @@ class ControllerExtensionPaymentGenoapay extends Controller {
         return $taxAmount;
     }
 
+    /**
+     * Get array element with a default value
+     * @param array $data
+     * @param $key
+     * @param null $default
+     * @return mixed|null
+     */
     protected function _getArrayData(array $data, $key, $default = null) {
         return isset($data[$key]) ? $data[$key] : $default;
     }
 
-    protected function _shouldLog() {
-        if ($this->config->get('payment_' . $this->_getPaymentMethodCode() . '_debug')) {
-            $this->latitude_pay->initLogger($this->_getPaymentMethodCode());
-            return true;
-        }
-        return false;
-    }
-
+    /**
+     * @return mixed
+     */
     protected function _collectTotal() {
         $totals = array();
         $taxes = $this->cart->getTaxes();
@@ -393,12 +408,74 @@ class ControllerExtensionPaymentGenoapay extends Controller {
         array_multisort($sort_order, SORT_ASC, $totals);
         return $total_data['total'];
     }
-    
+
+    /**
+     * @return string
+     */
     protected function _getPaymentMethodCode() {
         return self::PAYMENT_METHOD_CODE;
     }
-    
+
+    /**
+     * @return string
+     */
     protected function _getCurrencyCode() {
         return self::CURRENCY_CODE;
+    }
+
+    /**
+     * Get minimum order total configuration
+     */
+    protected function getMinimumOrderTotal() {
+        $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_order_total');
+    }
+
+    /**
+     * @param $amount
+     * @param $data
+     * @param false $isFullBlock
+     */
+    protected function displayPaymentSnippet ($amount, &$data, $isFullBlock = false) {
+        $this->load->language('extension/payment/' . $this->_getPaymentMethodCode());
+        if ($amount >= $this->getMinimumOrderTotal() ) {
+            $textPayment = $this->getSnippetContent($amount, $isFullBlock);
+        } else {
+            $textPayment = $this->language->get('text_info_payment');
+        }
+        $modalContent = $this->getModalContent();
+        $data['footer'] = $this->generateFooter($textPayment, $modalContent, $data['footer']);
+    }
+
+    /**
+     * @param $textPayment
+     * @param $modalContent
+     * @param $currentFooter
+     * @return string
+     */
+    protected function generateFooter($textPayment, $modalContent, $currentFooter) {
+        $this->twig->set('text_payment', $textPayment);
+        $this->twig->set('modal_content', $modalContent);
+        $this->twig->set('current_footer', $currentFooter);
+        return $this->twig->render('/default/template/extension/payment/' . $this->_getPaymentMethodCode() . '_footer');
+    }
+
+    /**
+     * @param $amount
+     * @param false $isFullBlock
+     * @return string|string[]
+     */
+    protected function getSnippetContent($amount, $isFullBlock = false) {
+        $snippet = $this->language->get('text_info_payment_with_amount');
+        $weeklyAmount = $this->currency->format($amount / 10, $this->session->data['currency']);
+        $text_payment = str_replace("{{{amount}}}", $weeklyAmount, $snippet);
+        $text_payment = str_replace("\"", "'", $text_payment);
+        return $text_payment;
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getModalContent() {
+        return $this->language->get('text_' . $this->_getPaymentMethodCode() . '_modal');
     }
 }
