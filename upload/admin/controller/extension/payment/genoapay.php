@@ -143,7 +143,9 @@ class ControllerExtensionPaymentGenoapay extends Controller
             $data['success_message'] = $message;
             unset($this->session->data[$this->_getPaymentMethodCode() . '_success_message']);
         }
-        $data['log'] = $this->_getLog();
+        $data['log_files'] = $this->_getLogFiles();
+        $data['current_log_file'] = $this->_getCurrentLogFile($data['log_files']);
+        $data['log'] = $this->_getLog($data['current_log_file']);
         return $this->response->setOutput($this->load->view('extension/payment/'.$this->_getPaymentMethodCode(), $data));
     }
 
@@ -216,18 +218,42 @@ class ControllerExtensionPaymentGenoapay extends Controller
         $this->response->setOutput(json_encode($json));
     }
 
+    protected function _getLogFiles() {
+        $logDir = DIR_SYSTEM . 'library/latitudepay/includes/log';
+        $files = glob($logDir . '/*.log');
+        foreach ($files as $file => &$path) {
+            $fileInfo = pathinfo($path);
+            $path = $fileInfo['filename'];
+        }
+        return $files;
+    }
+
     /**
      * Get payment method log records
+     * @param string $logFile
      * @return false|string
      */
-    protected function _getLog() {
+    protected function _getLog($logFile) {
         if ($this->validate()) {
-            $logDir = DIR_LOGS . $this->_getPaymentMethodCode() . "_finance_" . $this->_getPaymentMethodCode() . '.log';
+            $logDir = DIR_SYSTEM . 'library/latitudepay/includes/log/' . $logFile . '.log';
             if (file_exists($logDir)) {
                 return file_get_contents($logDir);
             }
         }
         return false;
+    }
+
+    /**
+     * Get the current log file should be loaded
+     * @param $logFiles
+     * @return mixed
+     */
+    protected function _getCurrentLogFile($logFiles) {
+        $logFile = end($logFiles);
+        if (isset($this->registry->get('request')->get['log_file'])) {
+            $logFile = $this->registry->get('request')->get['log_file'];
+        }
+        return $logFile;
     }
 
     /**

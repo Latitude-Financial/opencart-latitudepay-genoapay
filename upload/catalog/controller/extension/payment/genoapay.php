@@ -22,11 +22,20 @@ class ControllerExtensionPaymentGenoapay extends Controller {
      * @var string
      */
     const FAILED_ORDER_STATUS = 'failed';
-    
+
+    /**
+     * @var string
+     */
     const PAYMENT_METHOD_CODE = 'genoapay';
-    
+
+    /**
+     * @var string
+     */
     const LIBRARY_CODE = 'latitudepaylib';
 
+    /**
+     * @var string
+     */
     const CURRENCY_CODE = 'NZD';
 
     /**

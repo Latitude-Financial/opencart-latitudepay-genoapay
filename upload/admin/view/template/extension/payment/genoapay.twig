@@ -1,4 +1,5 @@
-{{ header }}{{ column_left }}
+{{ header }}
+{{ column_left }}
 <div id="content">
   <div class="page-header">
     <div class="container-fluid">
@@ -187,6 +188,14 @@
           </div>
           <div class="tab-pane" id="tab-order-log">
             <div class="tab-pane" id="tab-order-log">
+              <div class="log-selector" style="margin-bottom: 20px;">
+                <label for="LogSelector">Log file: </label>
+                  <select name="log_file" id="LogSelector" onchange="window.location.href+='&log_file=' + this.value;">
+                    {%  for logFile in log_files %}
+                      <option value="{{ logFile }}" {%  if logFile == current_log_file %} selected {% endif %}>{{ logFile }}</option>
+                    {% endfor %}
+                  </select>
+              </div>
               <textarea disabled cols="190" rows="30">{% if log %}{{ log | escape }}{% endif %}</textarea>
             </div>
           </div>
