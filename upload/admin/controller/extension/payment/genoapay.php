@@ -192,7 +192,7 @@ class ControllerExtensionPaymentGenoapay extends Controller
                                     $pTran['order_id'],
                                     $this->model_setting_setting->getSettingValue('payment_'.$this->_getPaymentMethodCode().'_order_partial_refunded_status_id',$this->config->get('config_store_id')),
                                     sprintf(
-                                        $this->language->get($this->_getPaymentMethodCode() . 'refund_order_history_message'),
+                                        $this->language->get($this->_getPaymentMethodCode() . '_refund_order_history_message'),
                                         $refundResponse['refundId'],
                                         $this->currency->format($amount, $pTran['currency_code'])
                                     )
