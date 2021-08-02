@@ -26,39 +26,6 @@ class ControllerExtensionPaymentLatitudePay extends ControllerExtensionPaymentGe
     }
 
     /**
-     * Get payment snippet content
-     * @param $amount
-     * @param false $isFullBlock
-     * @return string|string[]
-     */
-    protected function getSnippetContent($amount, $isFullBlock = false) {
-        $this->twig->set('images_api_url', $this->getImagesApiUrl());
-        $this->twig->set('amount', $amount);
-        $this->twig->set('gateway_name', $this->getPaymentTitle());
-        $this->twig->set('full_block', $isFullBlock);
-
-        return $this->twig->render('/default/template/extension/payment/latitudepay_snippet');
-    }
-
-    /**
-     * Get payment modal content
-     * @return mixed
-     */
-    public function getModalContent()
-    {
-        $this->twig->set('images_api_url', $this->getImagesApiUrl());
-        return $this->twig->render('/default/template/extension/payment/latitudepay_modal');
-    }
-
-    /**
-     * Get Images API URL
-     * @return string
-     */
-    private function getImagesApiUrl() {
-        return $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_images_api_url');
-    }
-
-    /**
      * Get payment title
      * @return string
      */

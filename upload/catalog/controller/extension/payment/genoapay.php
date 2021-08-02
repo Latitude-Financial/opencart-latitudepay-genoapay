@@ -38,6 +38,8 @@ class ControllerExtensionPaymentGenoapay extends Controller {
      */
     const CURRENCY_CODE = 'NZD';
 
+    const IMAGES_API_VERSION = 'v2';
+
     /**
      * ControllerExtensionPaymentGenoapay constructor.
      * @param $registry
@@ -61,27 +63,22 @@ class ControllerExtensionPaymentGenoapay extends Controller {
         $data['button_confirm'] = $this->language->get('button_confirm');
         $this->load->model('checkout/order');
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $data['payment_available'] = '0';
         if ($order_info) {
             $purchase_data = $this->_buildPurchaseData($order_info);
             $gateway = $this->_getPaymentGateway();
             if ($gateway) {
                 $purchase_response = $gateway->purchase($purchase_data);
                 if (isset($purchase_response['paymentUrl'])) {
+                    $data['payment_available'] = '1';
                     $data['payment_url'] = $purchase_response['paymentUrl'];
-                    if ($this->_getPaymentMethodCode() === ControllerExtensionPaymentLatitudePay::PAYMENT_METHOD_CODE) {
-                        $data['text_info_payment_checkout'] = $this->getSnippetContent($order_info['total'], true);
-                        $data['text_info_payment_checkout'] .= $this->getModalContent();
-                    } else {
-                        $data['text_info_payment_checkout'] = sprintf(
-                            $this->language->get('text_info_payment_checkout'),
-                            $this->currency->format($order_info['total'] / 10, $order_info['currency_code'])
-                        );
-                    }
-
-                    return $this->load->view('extension/payment/' . $this->_getPaymentMethodCode(), $data);
+                    $data['text_info_payment_checkout'] = $this->getSnippetContent($order_info['total'], true);
+                    $data['text_info_payment_checkout'] .= $this->getModalContent();
                 }
             }
         }
+        $data['warning_message'] = $this->language->get('unable_to_checkout');
+        return $this->load->view('extension/payment/' . $this->_getPaymentMethodCode(), $data);
     }
 
     /**
@@ -169,10 +166,9 @@ class ControllerExtensionPaymentGenoapay extends Controller {
         $this->load->model('checkout/order');
         $cartTotal = $this->_collectTotal();
         if ($this->_isMethodAvailable($cartTotal)) {
-            $snippet = $this->language->get('text_info_payment_with_amount');
-            $weeklyAmount = $this->currency->format($cartTotal / 10, $this->session->data['currency']);
-            $text_payment = str_replace("{{{amount}}}", $weeklyAmount, $snippet);
-            $data[$this->_getPaymentMethodCode() . '_payment_info_snippet'] = $text_payment . $this->language->get('text_' . $this->_getPaymentMethodCode() . '_modal');
+            $snippet = $this->getSnippetContent($cartTotal);
+            $modal = $this->getModalContent();
+            $data[$this->_getPaymentMethodCode() . '_payment_info_snippet'] = $snippet . $modal;
         }
     }
 
@@ -184,22 +180,12 @@ class ControllerExtensionPaymentGenoapay extends Controller {
      */
     public function checkoutInfo(&$route, &$data, &$output){
         $this->load->language('extension/payment/' . $this->_getPaymentMethodCode());
-        if (isset($this->session->data[$this->_getPaymentMethodCode() . '_warning_message']) && $message = $this->session->data[$this->_getPaymentMethodCode() . '_warning_message']) {
+        if (
+            isset($this->session->data[$this->_getPaymentMethodCode() . '_warning_message']) &&
+            $message = $this->session->data[$this->_getPaymentMethodCode() . '_warning_message']
+        ) {
             $data['error_warning'] = $message;
             unset($this->session->data[$this->_getPaymentMethodCode() . '_warning_message']);
-        }
-    }
-
-    /**
-     * Append stylesheet and script
-     */
-    public function modalScript() {
-        if (
-            $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_status') &&
-            $this->_getPaymentMethodCode() === ControllerExtensionPaymentGenoapay::PAYMENT_METHOD_CODE
-        ) {
-            $this->document->addScript('catalog/view/javascript/' . $this->_getPaymentMethodCode() . '/js/modal.js', 'footer');
-            $this->document->addStyle('catalog/view/javascript/' . $this->_getPaymentMethodCode() . '/css/style.css');
         }
     }
 
@@ -446,11 +432,7 @@ class ControllerExtensionPaymentGenoapay extends Controller {
      */
     protected function displayPaymentSnippet ($amount, &$data, $isFullBlock = false) {
         $this->load->language('extension/payment/' . $this->_getPaymentMethodCode());
-        if ($amount >= $this->getMinimumOrderTotal() ) {
-            $textPayment = $this->getSnippetContent($amount, $isFullBlock);
-        } else {
-            $textPayment = $this->language->get('text_info_payment');
-        }
+        $textPayment = $this->getSnippetContent($amount, $isFullBlock);
         $modalContent = $this->getModalContent();
         $data['footer'] = $this->generateFooter($textPayment, $modalContent, $data['footer']);
     }
@@ -474,17 +456,32 @@ class ControllerExtensionPaymentGenoapay extends Controller {
      * @return string|string[]
      */
     protected function getSnippetContent($amount, $isFullBlock = false) {
-        $snippet = $this->language->get('text_info_payment_with_amount');
-        $weeklyAmount = $this->currency->format($amount / 10, $this->session->data['currency']);
-        $text_payment = str_replace("{{{amount}}}", $weeklyAmount, $snippet);
-        $text_payment = str_replace("\"", "'", $text_payment);
-        return $text_payment;
+        $product = $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_product');
+        $imgUrl = $this->getImagesApiDomain() . self::IMAGES_API_VERSION . '/snippet.svg' . '?amount=' . $amount;
+        if ($isFullBlock) {
+            $imgUrl .= '&style=checkout';
+        }
+        if ($this->_getPaymentMethodCode() === ControllerExtensionPaymentGenoapay::PAYMENT_METHOD_CODE) {
+            $imgUrl .= '&services=GPAY';
+        } else {
+            $imgUrl .= '&services=' . $product;
+            if ($product !== 'LPAY') {
+                $paymentTerms = $this->config->get('payment_latitudepay_payment_terms');
+                $imgUrl .= '&terms=' . implode(',', $paymentTerms);
+            }
+
+        }
+        return "<img style='max-width: 100%' src='". $imgUrl ."' />";
     }
 
     /**
      * @return mixed
      */
     protected function getModalContent() {
-        return $this->language->get('text_' . $this->_getPaymentMethodCode() . '_modal');
+        return "<script type='application/javascript' src='". $this->getImagesApiDomain() . self::IMAGES_API_VERSION . '/util.js' ."'></script>";
+    }
+
+    protected function getImagesApiDomain() {
+        return $this->config->get('payment_latitudepay_images_api_url');
     }
 }
