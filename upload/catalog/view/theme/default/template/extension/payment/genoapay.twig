@@ -1,11 +1,15 @@
-{{  text_info_payment_checkout }}
-<div class="buttons">
-  <div class="pull-right">
-    <a href="{{ payment_url }}">
-      <button type="button" class="btn btn-primary">
-        {{ button_confirm }}
-      </button>
-    </a>
+{% if payment_available == '1' %}
+  {{  text_info_payment_checkout }}
+  <div class="buttons">
+    <div class="pull-right">
+      <a href="{{ payment_url }}">
+        <button type="button" data-available="{{ payment_available }}" class="btn btn-primary">
+          {{ button_confirm }}
+        </button>
+      </a>
+    </div>
   </div>
-</div>
-{{ text_genoapay_modal }}
+  {{ text_genoapay_modal }}
+{% else %}
+  {{ warning_message }}
+{% endif %}

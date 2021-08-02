@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
-    <name>Latitude and Genoapay Payment Extensions</name>
+    <name>LatitudePay and Genoapay Payment Extensions</name>
     <version>1.3</version>
     <code>LatitudeGenoapayPaymentExtension v1.3</code>
     <author>Latitude Financial Services</author>
@@ -10,9 +10,27 @@
         <operation>
             <search><![CDATA[ <div class="buttons"> ]]></search>
             <add position="before"><![CDATA[
-                {% if latitude_payment_info_snippet %}
+                {% if latitudepay_payment_info_snippet %}
                     <div style="text-align: right;">
-                        {{ latitude_payment_info_snippet }}
+                        {{ latitudepay_payment_info_snippet }}
+                    </div>
+                {% endif %}
+                {% if genoapay_payment_info_snippet %}
+                    <div style="text-align: right;">
+                        {{ genoapay_payment_info_snippet }}
+                    </div>
+                {% endif %}
+
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/checkout/cart.twig">
+        <operation>
+            <search><![CDATA[ <div class="buttons clearfix"> ]]></search>
+            <add position="before"><![CDATA[
+                {% if latitudepay_payment_info_snippet %}
+                    <div style="text-align: right;">
+                        {{ latitudepay_payment_info_snippet }}
                     </div>
                 {% endif %}
                 {% if genoapay_payment_info_snippet %}
