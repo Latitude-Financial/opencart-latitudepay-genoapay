@@ -43,9 +43,9 @@
             <div class="form-group">
               <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
               <div class="col-sm-10">
-                <select name="payment_latitude_pay_status" id="input-status" class="form-control">
-                  <option value="1" {% if payment_latitude_pay_status %} selected="selected" {% endif %}>{{ text_enabled }}</option>
-                  <option value="0" {% if not payment_latitude_pay_status %} selected="selected" {% endif %}>{{ text_disabled }}</option>
+                <select name="payment_latitudepay_status" id="input-status" class="form-control">
+                  <option value="1" {% if payment_latitudepay_status %} selected="selected" {% endif %}>{{ text_enabled }}</option>
+                  <option value="0" {% if not payment_latitudepay_status %} selected="selected" {% endif %}>{{ text_disabled }}</option>
                 </select>
               </div>
             </div>
@@ -55,7 +55,7 @@
                 {{ entry_title  }}
               </label>
               <div class="col-sm-10">
-                <input type="text" name="payment_latitude_pay_title" value="{{ payment_latitude_pay_title }}" placeholder="{{ entry_title }}" id="entry-title" class="form-control" readonly="readonly"/>
+                <input type="text" name="payment_latitudepay_title" value="{{ payment_latitudepay_title }}" placeholder="{{ entry_title }}" id="entry-title" class="form-control" readonly="readonly"/>
               </div>
             </div>
             <div class="form-group">
@@ -64,7 +64,7 @@
                 {{ entry_description  }}
               </label>
               <div class="col-sm-10">
-                <textarea name="payment_latitude_pay_description" id="entry-description" class="form-control" readonly="readonly">{{ payment_latitude_pay_description }}</textarea>
+                <textarea name="payment_latitudepay_description" id="entry-description" class="form-control" readonly="readonly">{{ payment_latitudepay_description }}</textarea>
               </div>
             </div>
             <div class="form-group">
@@ -73,24 +73,24 @@
                 {{ entry_order_total  }}
               </label>
               <div class="col-sm-10">
-                <input type="text" name="payment_latitude_pay_order_total" value="{{ payment_latitude_pay_order_total }}" placeholder="{{ entry_order_total }}" id="entry-order-total" class="form-control" readonly="readonly"/>
+                <input type="text" name="payment_latitudepay_order_total" value="{{ payment_latitudepay_order_total }}" placeholder="{{ entry_order_total }}" id="entry-order-total" class="form-control" readonly="readonly"/>
               </div>
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label" for="input-environment">
                 <span data-toggle="tooltip" title="{{ help_environment }}">{{ entry_environment }}</span></label>
               <div class="col-sm-10">
-                <select name="payment_latitude_pay_environment" id="input-environment" class="form-control">
-                  <option value="production" {% if payment_latitude_pay_environment == 'production' %} selected="selected" {% endif %}>{{ text_production }}</option>
-                  <option value="sandbox" {% if payment_latitude_pay_environment == 'sandbox' %} selected="selected" {% endif %}>{{ text_sandbox }}</option>
+                <select name="payment_latitudepay_environment" id="input-environment" class="form-control">
+                  <option value="production" {% if payment_latitudepay_environment == 'production' %} selected="selected" {% endif %}>{{ text_production }}</option>
+                  <option value="sandbox" {% if payment_latitudepay_environment == 'sandbox' %} selected="selected" {% endif %}>{{ text_sandbox }}</option>
                 </select>
               </div>
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label" for="input-debug"><span data-toggle="tooltip" title="{{ help_debug }}">{{ entry_debug }}</span></label>
               <div class="col-sm-10">
-                <select name="payment_latitude_pay_debug" id="input-debug" class="form-control">
-                  {% if payment_latitude_pay_debug %}
+                <select name="payment_latitudepay_debug" id="input-debug" class="form-control">
+                  {% if payment_latitudepay_debug %}
                     <option value="1" selected="selected">{{ text_enabled }}</option>
                     <option value="0">{{ text_disabled }}</option>
                   {% else %}
@@ -106,7 +106,7 @@
                 {{ entry_production_api_key }}
               </label>
               <div class="col-sm-10">
-                <input type="text" name="payment_latitude_pay_production_api_key" value="{{ payment_latitude_pay_production_api_key }}" placeholder="{{ entry_production_api_key }}" id="entry-production-api-key" class="form-control" />
+                <input type="text" name="payment_latitudepay_production_api_key" value="{{ payment_latitudepay_production_api_key }}" placeholder="{{ entry_production_api_key }}" id="entry-production-api-key" class="form-control" />
               </div>
             </div>
             <div class="form-group">
@@ -115,7 +115,7 @@
                 {{ entry_production_api_secret }}
               </label>
               <div class="col-sm-10">
-                <input type="text" name="payment_latitude_pay_production_api_secret" value="{{ payment_latitude_pay_production_api_secret }}" placeholder="{{ entry_production_api_secret }}" id="entry-production-api-secret" class="form-control" />
+                <input type="text" name="payment_latitudepay_production_api_secret" value="{{ payment_latitudepay_production_api_secret }}" placeholder="{{ entry_production_api_secret }}" id="entry-production-api-secret" class="form-control" />
               </div>
             </div>
             <div class="form-group">
@@ -124,7 +124,7 @@
                 {{ entry_sandbox_api_key }}
               </label>
               <div class="col-sm-10">
-                <input type="text" name="payment_latitude_pay_sandbox_api_key" value="{{ payment_latitude_pay_sandbox_api_key }}" placeholder="{{ entry_sandbox_api_key }}" id="entry-sandbox-api-key" class="form-control" />
+                <input type="text" name="payment_latitudepay_sandbox_api_key" value="{{ payment_latitudepay_sandbox_api_key }}" placeholder="{{ entry_sandbox_api_key }}" id="entry-sandbox-api-key" class="form-control" />
               </div>
             </div>
             <div class="form-group">
@@ -133,13 +133,22 @@
                 {{ entry_sandbox_api_secret }}
               </label>
               <div class="col-sm-10">
-                <input type="text" name="payment_latitude_pay_sandbox_api_secret" value="{{ payment_latitude_pay_sandbox_api_secret }}" placeholder="{{ entry_sandbox_api_secret }}" id="entry-sandbox-api-secret" class="form-control" />
+                <input type="text" name="payment_latitudepay_sandbox_api_secret" value="{{ payment_latitudepay_sandbox_api_secret }}" placeholder="{{ entry_sandbox_api_secret }}" id="entry-sandbox-api-secret" class="form-control" />
               </div>
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
               <div class="col-sm-10">
-                <input type="number" name="payment_latitude_pay_sort_order" value="{{ payment_latitude_pay_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control"/>
+                <input type="number" name="payment_latitudepay_sort_order" value="{{ payment_latitudepay_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="entry-images-api-url">
+                <span data-toggle="tooltip" title="{{ help_images_api_url }}">
+                {{ entry_images_api_url }}
+              </label>
+              <div class="col-sm-10">
+                <input type="text" name="payment_latitudepay_images_api_url" value="{{ payment_latitudepay_images_api_url }}" placeholder="{{ entry_images_api_url }}" id="entry-images-api-url" class="form-control" />
               </div>
             </div>
           </div>
@@ -147,9 +156,9 @@
             <div class="form-group">
               <label class="col-sm-2 control-label" for="input-order-completed-status">{{ entry_order_completed_status }}</label>
               <div class="col-sm-10">
-                <select name="payment_latitude_pay_order_completed_status_id" id="input-order-completed-status" class="form-control">
+                <select name="payment_latitudepay_order_completed_status_id" id="input-order-completed-status" class="form-control">
                   {% for order_status in order_statuses %}
-                    <option value="{{ order_status.order_status_id }}" {% if payment_latitude_pay_order_completed_status_id ==  order_status.order_status_id %} selected="selected" {% endif %}>{{ order_status.name }}</option>
+                    <option value="{{ order_status.order_status_id }}" {% if payment_latitudepay_order_completed_status_id ==  order_status.order_status_id %} selected="selected" {% endif %}>{{ order_status.name }}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -157,9 +166,9 @@
             <div class="form-group">
               <label class="col-sm-2 control-label" for="input-order-failed-status">{{ entry_order_failed_status }}</label>
               <div class="col-sm-10">
-                <select name="payment_latitude_pay_order_failed_status_id" id="input-order-failed-status" class="form-control">
+                <select name="payment_latitudepay_order_failed_status_id" id="input-order-failed-status" class="form-control">
                   {% for order_status in order_statuses %}
-                    <option value="{{ order_status.order_status_id }}" {% if payment_latitude_pay_order_failed_status_id ==  order_status.order_status_id %} selected="selected" {% endif %}>{{ order_status.name }}</option>
+                    <option value="{{ order_status.order_status_id }}" {% if payment_latitudepay_order_failed_status_id ==  order_status.order_status_id %} selected="selected" {% endif %}>{{ order_status.name }}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -167,9 +176,9 @@
             <div class="form-group">
               <label class="col-sm-2 control-label" for="input-order-partial-refunded-status">{{ entry_order_partial_refunded_status }}</label>
               <div class="col-sm-10">
-                <select name="payment_latitude_pay_order_partial_refunded_status_id" id="input-order-partial-refunded-status" class="form-control">
+                <select name="payment_latitudepay_order_partial_refunded_status_id" id="input-order-partial-refunded-status" class="form-control">
                   {% for order_status in order_statuses %}
-                    <option value="{{ order_status.order_status_id }}" {% if payment_latitude_pay_order_partial_refunded_status_id ==  order_status.order_status_id %} selected="selected" {% endif %}>{{ order_status.name }}</option>
+                    <option value="{{ order_status.order_status_id }}" {% if payment_latitudepay_order_partial_refunded_status_id ==  order_status.order_status_id %} selected="selected" {% endif %}>{{ order_status.name }}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -177,9 +186,9 @@
             <div class="form-group">
               <label class="col-sm-2 control-label" for="input-order-refunded-status">{{ entry_order_refunded_status }}</label>
               <div class="col-sm-10">
-                <select name="payment_latitude_pay_order_refunded_status_id" id="input-order-refunded-status" class="form-control">
+                <select name="payment_latitudepay_order_refunded_status_id" id="input-order-refunded-status" class="form-control">
                   {% for order_status in order_statuses %}
-                    <option value="{{ order_status.order_status_id }}" {% if payment_latitude_pay_order_refunded_status_id ==  order_status.order_status_id %} selected="selected" {% endif %}>{{ order_status.name }}</option>
+                    <option value="{{ order_status.order_status_id }}" {% if payment_latitudepay_order_refunded_status_id ==  order_status.order_status_id %} selected="selected" {% endif %}>{{ order_status.name }}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -187,6 +196,14 @@
           </div>
           <div class="tab-pane" id="tab-order-log">
             <div class="tab-pane" id="tab-order-log">
+              <div class="log-selector" style="margin-bottom: 20px;">
+                <label for="LogSelector">Log file: </label>
+                <select name="log_file" id="LogSelector" onchange="window.location.href+='&log_file=' + this.value;">
+                  {%  for logFile in log_files %}
+                    <option value="{{ logFile }}" {%  if logFile == current_log_file %} selected {% endif %}>{{ logFile }}</option>
+                  {% endfor %}
+                </select>
+              </div>
               <textarea disabled cols="190" rows="30">{% if log %}{{ log | escape }}{% endif %}</textarea>
             </div>
           </div>

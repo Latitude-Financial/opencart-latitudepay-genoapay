@@ -1,6 +1,6 @@
 <?php
-final class latitude_pay {
-    const LATITUDE_PAYMENT_CODE = "latitude_pay";
+final class latitudepaylib {
+    const LATITUDE_PAYMENT_CODE = "latitudepay";
     const GENOAPAY_PAYMENT_CODE = "genoapay";
     const MODE_PRODUCTION = 'production';
     const MODE_SANDBOX = 'sandbox';
@@ -26,7 +26,7 @@ final class latitude_pay {
         $this->customer = $registry->get('customer');
         $this->currency = $registry->get('currency');
         $this->registry = $registry;
-        require DIR_SYSTEM . 'library/latitude_pay/includes/autoload.php';
+        require DIR_SYSTEM . 'library/latitudepay/includes/autoload.php';
     }
 
     /**
@@ -43,29 +43,15 @@ final class latitude_pay {
             }
             switch ($paymentGatewayCode) {
                 case self::LATITUDE_PAYMENT_CODE:
-                    $this->initLogger($paymentGatewayCode);
-                    return new Latitudepay($configData);
+                    return new Latitudepay($configData, $this->isDebugEnabled($paymentGatewayCode));
                 case self::GENOAPAY_PAYMENT_CODE:
-                    $this->initLogger($paymentGatewayCode);
-                    return new Genoapay($configData);
+                    return new Genoapay($configData, $this->isDebugEnabled($paymentGatewayCode));
                 default:
                     return null;
             }
         } catch (\Exception $exception) {
-            $this->logger->write($exception->getMessage());
             return null;
         }
-    }
-
-    public function initLogger($paymentGatewayCode) {
-        if (!$this->logger) {
-            $this->logger = new \Log('latitude_finance_'.$paymentGatewayCode.'.log');
-        }
-        return $this;
-    }
-
-    public function log($message) {
-        $this->logger->write($message);
     }
 
     protected function buildConfigArray($config, $paymentGatewayCode) {
@@ -90,5 +76,14 @@ final class latitude_pay {
             }
         }
         return null;
+    }
+
+    /**
+     * Check if debug mode is enabled
+     * @param $paymentCode
+     * @return bool
+     */
+    private function isDebugEnabled($paymentCode) {
+        return (bool) $this->config->get('payment_' . $paymentCode . '_debug');
     }
 }

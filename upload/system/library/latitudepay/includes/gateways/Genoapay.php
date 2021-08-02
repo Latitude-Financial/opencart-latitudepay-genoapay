@@ -44,7 +44,7 @@ class Genoapay extends BinaryPay
      */
     protected $_debug = false;
 
-    public function __construct($credential = array())
+    public function __construct($credential = array(), $debug = false)
     {
         parent::__construct($credential);
         $this->setConfig(
@@ -62,7 +62,7 @@ class Genoapay extends BinaryPay
                 'api-error-message-field' => 'error'
             )
         );
-
+        $this->setConfig(['debug' => $debug]);
         $this->getToken();
     }
 
@@ -120,7 +120,7 @@ class Genoapay extends BinaryPay
   /**
      * @description main function to query API.
      * @param  array  request body
-     * @return array  returns API response
+     * @return string  returns API response
      */
 
     public function getApiUrl()

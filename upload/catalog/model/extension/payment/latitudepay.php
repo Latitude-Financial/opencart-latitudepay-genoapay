@@ -6,7 +6,7 @@ if (!class_exists('ModelExtensionPaymentGenoapay')) {
 
 class ModelExtensionPaymentLatitudePay extends ModelExtensionPaymentGenoapay {
     const CURRENCY_CODE = "AUD";
-    const PAYMENT_METHOD_CODE = "latitude_pay";
+    const PAYMENT_METHOD_CODE = "latitudepay";
     const PAYMENT_MODEL_CODE = 'latitude';
 
     protected function _getPaymentMethodCode() {
