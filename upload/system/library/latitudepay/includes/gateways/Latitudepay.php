@@ -44,7 +44,7 @@ class Latitudepay extends Genoapay
   /**
      * @description main function to query API.
      * @param  array  request body
-     * @return array  returns API response
+     * @return string  returns API response
      */
 
     public function getApiUrl()

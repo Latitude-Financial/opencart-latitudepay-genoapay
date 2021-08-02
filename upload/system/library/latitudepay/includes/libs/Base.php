@@ -143,7 +143,7 @@ class Base
     /**
      * arrayFlatten converts multidimentional array to array
      * @param  array $array array to convert
-     * @return array single level array
+     * @return bool|array single level array
      */
     public function arrayFlatten($array)
     {
