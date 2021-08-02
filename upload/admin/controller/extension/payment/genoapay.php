@@ -105,6 +105,17 @@ class ControllerExtensionPaymentGenoapay extends Controller
                 $error = $this->language->get($this->_getPaymentMethodCode() . '_environment_required');
             }
 
+            if (
+                isset($configData['payment_' . $this->_getPaymentMethodCode() . '_product']) &&
+                $configData['payment_' . $this->_getPaymentMethodCode() . '_product'] !== 'LPAY' &&
+                (
+                !isset($configData['payment_' . $this->_getPaymentMethodCode() . '_payment_terms']) ||
+                !$configData['payment_' . $this->_getPaymentMethodCode() . '_payment_terms']
+                )
+            ) {
+                $error = $this->language->get($this->_getPaymentMethodCode() . '_payment_terms_required');
+            }
+
             if ($error) {
                 $this->session->data[$this->_getPaymentMethodCode() . '_error_message'] = $error;
                 $this->response->redirect($this->url->link('extension/payment/'.$this->_getPaymentMethodCode(), 'user_token=' . $this->session->data['user_token'], true));
