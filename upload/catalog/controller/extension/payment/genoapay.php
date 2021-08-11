@@ -38,6 +38,14 @@ class ControllerExtensionPaymentGenoapay extends Controller {
      */
     const CURRENCY_CODE = 'NZD';
 
+    /**
+     * @var string
+     */
+    const DEFAULT_IMAGES_API_URL = 'https://images.latitudepayapps.com/';
+
+    /**
+     * @var string
+     */
     const IMAGES_API_VERSION = 'v2';
 
     /**
@@ -481,7 +489,10 @@ class ControllerExtensionPaymentGenoapay extends Controller {
         return "<script type='application/javascript' src='". $this->getImagesApiDomain() . self::IMAGES_API_VERSION . '/util.js' ."'></script>";
     }
 
+    /**
+     * @return string
+     */
     protected function getImagesApiDomain() {
-        return $this->config->get('payment_latitudepay_images_api_url');
+        return $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_images_api_url') ? $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_images_api_url') : self::DEFAULT_IMAGES_API_URL;
     }
 }

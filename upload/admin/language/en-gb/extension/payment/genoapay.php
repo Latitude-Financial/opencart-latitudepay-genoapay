@@ -38,6 +38,7 @@ $_['entry_order_pending_status'] = 'Pending Order Status';
 $_['entry_order_failed_status'] = 'Failed/Cancelled Order Status';
 $_['entry_order_refunded_status'] = 'Refunded Order Status';
 $_['entry_order_partial_refunded_status'] = 'Partial Refunded Order Status';
+$_['entry_images_api_url'] = 'Images API URL';
 
 // Help
 $_['help_test'] = 'Use the live or testing (sandbox) gateway server to process transactions?';
@@ -52,6 +53,7 @@ $_['help_production_api_secret'] = 'The Private Key for your GenoaPay account.';
 $_['help_sandbox_api_key'] = 'The Public Key for your sandbox account.';
 $_['help_sandbox_api_secret'] = 'The Private Key for your sandbox account.';
 $_['help_order_total'] = 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.';
+$_['help_images_api_url'] = 'Images API URL will be used for payment snippets and modal';
 
 // Error
 $_['error_invalid_configuration'] = 'This method is not available with your current configuration! It should be in New Zealand with NZD as the currency.';
