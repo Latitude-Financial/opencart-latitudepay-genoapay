@@ -102,6 +102,13 @@ class ControllerExtensionPaymentGenoapay extends Controller {
             $result = $this->_getArrayData($response, 'result');
             $paymentGateway = $this->registry->get('model_extension_payment_' . $this->_getPaymentMethodCode())->getCurrentPaymentGateway();
 
+            if ($this->config->get('payment_' . $this->_getPaymentMethodCode() . '_debug')) {
+                $logMessage = "======CALLBACK INFO STARTS======\n";
+                $logMessage .= json_encode($this->request->get, JSON_PRETTY_PRINT);
+                $logMessage .= "\n======CALLBACK INFO ENDS======";
+                BinaryPay::log($logMessage, true, 'latitudepay-finance-' . date('Y-m-d') . '.log');
+            }
+
 
             switch ($result) {
                 case BinaryPay_Variable::STATUS_COMPLETED:
