@@ -20,6 +20,9 @@ $_['text_production'] = 'Production';
 $_['text_sandbox'] = 'Sandbox';
 $_['text_check_configuration'] = 'Check the current configuration';
 $_['text_gateway_configuration_warning'] = 'Your API credentials are invalid, please check again';
+$_['text_product_lpay'] = 'LatitudePay';
+$_['text_product_lpayplus'] = 'LatitudePay+';
+$_['text_product_co_presentment'] = 'Co-Presentment (LatitudePay & LatitudePay+)';
 
 // Entry
 $_['entry_title'] = 'Title';
@@ -40,6 +43,9 @@ $_['entry_order_failed_status'] = 'Failed/Cancelled Order Status';
 $_['entry_order_refunded_status'] = 'Refunded Order Status';
 $_['entry_order_partial_refunded_status'] = 'Partial Refunded Order Status';
 $_['entry_images_api_url'] = 'Images API URL';
+$_['entry_product'] = 'Product';
+$_['entry_payment_terms'] = 'Payment Terms';
+
 
 // Help
 $_['help_test'] = 'Use the live or testing (sandbox) gateway server to process transactions?';
@@ -60,11 +66,12 @@ $_['help_images_api_url'] = 'Images API URL will be used for payment snippets an
 $_['error_invalid_configuration'] = 'This method is not available with your current configuration! It should be in Australia with AUD as the currency.';
 $_['error_permission'] = 'Warning: You do not have permission to modify payment configuration!';
 $_['error_email'] = 'E-Mail required!';
-$_['latitude_transaction_not_found'] = 'The payment transaction with given token is not exist!';
-$_['latitude_transaction_payment_exceed'] = 'The refund amount is bigger than the available value!';
-$_['latitude_environment_required'] = 'You have to set the payment environment!';
-$_['latitude_invalid_environment'] = 'The environment name is invalid!';
-$_['latitude_api_credentials_required'] = 'Client ID or Secret cannot be blank';
+$_['latitudepay_transaction_not_found'] = 'The payment transaction with given token is not exist!';
+$_['latitudepay_transaction_payment_exceed'] = 'The refund amount is bigger than the available value!';
+$_['latitudepay_environment_required'] = 'You have to set the payment environment!';
+$_['latitudepay_payment_terms_required'] = 'You have to set at least one value for Payment Terms!';
+$_['latitudepay_invalid_environment'] = 'The environment name is invalid!';
+$_['latitudepay_api_credentials_required'] = 'Client ID or Secret cannot be blank';
 
 // Message
 $_['latitudepay_refund_order_message'] = 'Your order has been refunded successfully!';
