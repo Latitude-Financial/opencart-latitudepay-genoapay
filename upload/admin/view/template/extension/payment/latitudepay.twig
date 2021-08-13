@@ -1,4 +1,5 @@
 {{ header }}{{ column_left }}
+
 <div id="content">
   <div class="page-header">
     <div class="container-fluid">
@@ -47,6 +48,47 @@
                   <option value="1" {% if payment_latitudepay_status %} selected="selected" {% endif %}>{{ text_enabled }}</option>
                   <option value="0" {% if not payment_latitudepay_status %} selected="selected" {% endif %}>{{ text_disabled }}</option>
                 </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="input-product">{{ entry_product }}</label>
+              <div class="col-sm-10">
+                <select name="payment_latitudepay_product" id="input-product" class="form-control">
+                  <option value="LPAY" {% if payment_latitudepay_product == 'LPAY' %} selected="selected" {% endif %}>{{ text_product_lpay }}</option>
+                  <option value="LPAYPLUS" {% if payment_latitudepay_product == 'LPAYPLUS' %} selected="selected" {% endif %}>{{ text_product_lpayplus }}</option>
+                  <option value="LPAY,LPAYPLUS" {% if payment_latitudepay_product == 'LPAY,LPAYPLUS' %} selected="selected" {% endif %}>{{ text_product_co_presentment }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group payment-terms">
+              <label class="col-sm-2 control-label">
+                {{ entry_payment_terms }}
+              </label>
+              <div class="col-sm-10">
+                <div class="alert alert-danger no-payment-terms-error-message">
+                  {{ latitudepay_payment_terms_required }}
+                </div>
+                <div class="form-group">
+                  <input  id="PaymentTerm6Month" class="form-control" name="payment_latitudepay_payment_terms[]" type="checkbox" value="6" {% if '6' in payment_latitudepay_payment_terms %} checked {% endif %} />
+                  <label for="PaymentTerm6Month">6 months</label>
+                </div>
+                <div class="form-group">
+                  <input  id="PaymentTerm12Month" class="form-control" name="payment_latitudepay_payment_terms[]" type="checkbox" value="12" {% if '12' in payment_latitudepay_payment_terms %} checked {% endif %} />
+                  <label for="PaymentTerm12Month">12 months</label>
+                </div>
+                <div class="form-group">
+                  <input  id="PaymentTerm18Months" class="form-control" name="payment_latitudepay_payment_terms[]" type="checkbox" value="18" {% if '18' in payment_latitudepay_payment_terms %} checked {% endif %} />
+                  <label for="PaymentTerm18Months">18 months</label>
+                </div>
+                <div class="form-group">
+                  <input id="PaymentTerm24Months" class="form-control" name="payment_latitudepay_payment_terms[]" type="checkbox" value="24" {% if '24' in payment_latitudepay_payment_terms %} checked {% endif %} />
+                  <label for="PaymentTerm24Months">24 months</label>
+                </div>
+                <div class="form-group">
+                  <span>
+                    (The following payment terms will be displayed on your PDP Modal. Please check your contract to see what payment terms will be offered to your customers)
+                  </span>
+                </div>
               </div>
             </div>
             <div class="form-group">
@@ -224,4 +266,57 @@
     {% endif %}
   </div>
 </div>
+<style>
+  .payment-terms input[name="payment_latitudepay_payment_terms[]"] {
+    margin-right: 10px;
+  }
+
+  .payment-terms .form-group {
+    display: flex;
+  }
+
+  .payment-terms .form-group label {
+    font-weight: normal;
+  }
+
+  .no-payment-terms-error-message {
+    display: none;
+  }
+</style>
+<script type="application/javascript">
+    var paymentTermElems = document.querySelectorAll('input[name="payment_latitudepay_payment_terms[]"]');
+    var productElem = document.getElementById('input-product');
+    var paymentTermErrElem = document.querySelector('.no-payment-terms-error-message');
+    var paymentTermsWrapperElem = document.querySelector('.form-group.payment-terms');
+    productElem.addEventListener('change', function (e) {
+      e.preventDefault();
+      refresh();
+    });
+
+    for(var i = 0; i < paymentTermElems.length; i++) {
+      paymentTermElems[i].addEventListener('change', function (e) {
+        e.preventDefault();
+        refresh();
+      })
+    }
+    refresh();
+    function refresh() {
+        var shouldDisable = !productElem.value || productElem.value === 'LPAY';
+        for(var i = 0; i < paymentTermElems.length; i++) {
+          paymentTermElems[i].disabled = shouldDisable;
+        }
+
+        if (!shouldDisable) {
+          paymentTermsWrapperElem.style.display = 'block';
+          if (document.querySelectorAll('input[name="payment_latitudepay_payment_terms[]"]:checked').length) {
+            paymentTermErrElem.style.display = 'none';
+          } else {
+            paymentTermErrElem.style.display = 'block';
+          }
+        } else {
+          paymentTermErrElem.style.display = 'none';
+          paymentTermsWrapperElem.style.display = 'none';
+        }
+    }
+</script>
 {{ footer }}

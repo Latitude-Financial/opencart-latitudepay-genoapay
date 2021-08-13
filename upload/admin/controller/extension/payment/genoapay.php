@@ -105,6 +105,17 @@ class ControllerExtensionPaymentGenoapay extends Controller
                 $error = $this->language->get($this->_getPaymentMethodCode() . '_environment_required');
             }
 
+            if (
+                isset($configData['payment_' . $this->_getPaymentMethodCode() . '_product']) &&
+                $configData['payment_' . $this->_getPaymentMethodCode() . '_product'] !== 'LPAY' &&
+                (
+                !isset($configData['payment_' . $this->_getPaymentMethodCode() . '_payment_terms']) ||
+                !$configData['payment_' . $this->_getPaymentMethodCode() . '_payment_terms']
+                )
+            ) {
+                $error = $this->language->get($this->_getPaymentMethodCode() . '_payment_terms_required');
+            }
+
             if ($error) {
                 $this->session->data[$this->_getPaymentMethodCode() . '_error_message'] = $error;
                 $this->response->redirect($this->url->link('extension/payment/'.$this->_getPaymentMethodCode(), 'user_token=' . $this->session->data['user_token'], true));
@@ -112,11 +123,10 @@ class ControllerExtensionPaymentGenoapay extends Controller
             if (!class_exists('ControllerExtensionPaymentLatitudePay')) {
                 require_once __DIR__ . '/latitudepay.php';
             }
-            if ($this->_getPaymentMethodCode() === ControllerExtensionPaymentLatitudePay::PAYMENT_METHOD_CODE) {
-                $imagesApiUrlConfigCode = 'payment_' . $this->_getPaymentMethodCode() . '_images_api_url';
-                if (!isset($configData[$imagesApiUrlConfigCode]) || empty($configData[$imagesApiUrlConfigCode])) {
-                    $configData[$imagesApiUrlConfigCode] = self::DEFAULT_IMAGES_API_URL;
-                }
+
+            $imagesApiUrlConfigCode = 'payment_' . $this->_getPaymentMethodCode() . '_images_api_url';
+            if (!isset($configData[$imagesApiUrlConfigCode]) || empty($configData[$imagesApiUrlConfigCode])) {
+                $configData[$imagesApiUrlConfigCode] = self::DEFAULT_IMAGES_API_URL;
             }
 
             $this->model_setting_setting->editSetting('payment_'.$this->_getPaymentMethodCode(), $configData, $this->config->get('config_store_id'));
