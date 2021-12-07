@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>LatitudePay and Genoapay Payment Extensions</name>
-    <version>1.4</version>
+    <version>1.5</version>
     <code>LatitudeGenoapayPaymentExtension v1.4</code>
     <author>Latitude Financial Services</author>
     <link>https://www.latitudepay.com/</link>
-    
+
     <file path="catalog/view/theme/*/template/checkout/cart.twig">
         <operation>
             <search><![CDATA[ <div class="buttons"> ]]></search>
@@ -42,5 +42,5 @@
             ]]></add>
         </operation>
     </file>
-    
+
 </modification>
