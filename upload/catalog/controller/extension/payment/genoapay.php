@@ -82,6 +82,8 @@ class ControllerExtensionPaymentGenoapay extends Controller {
                     $data['payment_url'] = $purchase_response['paymentUrl'];
                     $data['text_info_payment_checkout'] = $this->getSnippetContent($order_info['total'], true);
                     $data['text_info_payment_checkout'] .= $this->getModalContent();
+                    $this->session->data['purchase_token'] = $purchase_response['token'] ?? null;
+                    $this->session->data['reference'] = (string) $order_info['order_id'];
                 }
             }
         }
@@ -107,6 +109,20 @@ class ControllerExtensionPaymentGenoapay extends Controller {
                 $logMessage .= json_encode($this->request->get, JSON_PRETTY_PRINT);
                 $logMessage .= "\n======CALLBACK INFO ENDS======";
                 BinaryPay::log($logMessage, true, 'latitudepay-finance-' . date('Y-m-d') . '.log');
+            }
+
+            // Verify payment token
+            $token = $this->session->data['purchase_token'];
+            $this->session->data['payment_token'] = null;
+            if ($token !== $this->request->get['token']) {
+                $this->session->data[$this->_getPaymentMethodCode() . '_warning_message'] = "Invalid payment token";
+                $this->response->redirect($this->url->link('checkout/checkout', '', true));
+            }
+
+            // Verify signature
+            if (!$this->validateSignature()) {
+                $this->session->data[$this->_getPaymentMethodCode() . '_warning_message'] = "Invalid response signature.";
+                $this->response->redirect($this->url->link('checkout/checkout', '', true));
             }
 
 
@@ -501,5 +517,31 @@ class ControllerExtensionPaymentGenoapay extends Controller {
      */
     protected function getImagesApiDomain() {
         return $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_images_api_url') ? $this->config->get('payment_' . $this->_getPaymentMethodCode() . '_images_api_url') : self::DEFAULT_IMAGES_API_URL;
+    }
+
+    /**
+     * Check if response signature is valid
+     * @param $gatewayName
+     * @param $request
+     * @return bool
+     */
+    private function validateSignature()
+    {
+        /**
+         * @var BinaryPay $gateway
+         */
+        $gateway = $this->_getPaymentGateway();
+        $gluedString = $gateway->recursiveImplode(
+            array(
+                'token' => $this->request->get['token'],
+                'reference' => isset($this->session->data['reference']) ? $this->session->data['reference'] : null,
+                'message' => $this->request->get['message'],
+                'result' => $this->request->get['result'],
+            ),
+            '',
+            true
+        );
+        $signature = hash_hmac( 'sha256', base64_encode( $gluedString ), $gateway->getConfig( 'password' ) );
+        return $signature === $this->request->get['signature'];
     }
 }
